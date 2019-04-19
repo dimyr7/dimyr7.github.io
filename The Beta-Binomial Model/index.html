@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<title>The Beta-Binomial Model</title>
+	</head>
+<body>
+<h1>The Beta-Binomial Model</h1>
+
+<p>Problem: predicting coin tosses</p>
+
+<p>Given: data$D=\{x_1, \cdots, x_N\}$. From now on, let $i\in\{1,\cdots,N\}$ be an iterator. There are $N$ previous coin tosses. $X_i \sim Ber(\theta)$ where $1$ is heads, $0$ is tails</p>
+
+<h2>Likelihood</h2>
+
+<p>Let</p>
+
+$\begin{equation}\begin{split}\displaystyle
+n_1 &= \sum_i x_i\\
+n_0 &= N - n_1\\
+    &= \sum_i (1-x_i)
+\end{split}\end{equation}$
+<p>$n_1, n_0$ are <strong>empirical counts</strong></p>
+
+<p>Solve for Likelihood</p>
+
+<ol>
+	<li>Probability of dataset is product of probabilities of individual events, explain why order doesn’t matter</li>
+	<li>Replace with actual probability</li>
+	<li>Evaluate product &amp; combine</li>
+	<li>Proportional to Binomial distribution</li>
+</ol>
+
+$\begin{equation}\begin{split}\displaystyle
+P(D|\theta)
+&\propto \prod_i P(x_i | \theta)\\
+&= \prod_i \theta^{x_i}(1-\theta)^{1-x_i}\\
+&= \theta^{n_1}(1-\theta)^{n_0}\\
+&\propto Bin(n_1| \theta, N)
+\end{split}\end{equation}$
+<p>We can replace original data with $D$ with sufficient statistics $n_1$ and $n_0$. The order of coin flips in the data doesn’t matter, only the number of times it landed on each side does. Therefore $n_1$and $n_0$ are the only things we have to know. From now we will say $D=\{n_0, n_1\}$</p>
+
+<h2>Prior</h2>
+
+<p>We can, and should, treat $\theta$ as a random variable. What distribution does $\theta$ follow? First, we have a constraint $0< \theta < 1$. So the chosen distribution must have this support, strictly. I’d be nice if the prior was in the same form as the likelihood. That way the math works out easier. This is called a conjugate prior. The conjugate prior for the Binomial distribution is the Beta distribution.</p>
+
+<p>So $\theta \sim Beta(\alpha, \beta)$ and $P(\theta) = \frac{\theta^{\alpha-1}(1-\theta)^{\beta -1}}{B(\alpha, \beta)}$. We have to hyper parameters $\alpha, \beta$. If we know “nothing” about $\theta$ then we can set $\alpha=\beta=1$ to get a uniform prior. Otherwise we can set them to get whatever prior we want. </p>
+
+<p>$\alpha$ and $\beta$ are <strong>pseudo-counts</strong>. They represent how strong our prior belief is. It’s <em>as if</em> we’ve already seen $\alpha$ heads and $\beta$ tails. $\alpha+\beta$ is known as an <strong>equivalent sample size</strong> because its <em>as if</em> we’ve seen $\alpha+\beta$ coin flips. If either of the pseudo-counts is high, then we start out believing the the coin is biased. If the equivalent sample size is high, the we believe strongly in out prior. </p>
+
+<h2>Posterior</h2>
+
+<p>Solve for posterior</p>
+
+<ol>
+	<li>Write definition, explain why proportional to</li>
+	<li>Plug in distributions, explain why proportional to</li>
+	<li>Write binomial coefficient as Beta function</li>
+	<li>Condense</li>
+	<li>Show as beta distribution, explain why proportional to</li>
+</ol>
+
+$\begin{equation}\begin{split}\displaystyle
+P(\theta|D) 
+&\propto P(D|\theta) P(\theta)\\
+&\propto Bin(n_1|\theta, N) Beta(\alpha, \beta)\\
+&\propto \theta^{n_1}(1-\theta)^{n_0} \cdot \frac{\theta^{\alpha-1} (1-\theta)^{\beta -1}}{B(\alpha,\beta)}\\
+&= \frac{\theta^{n_1 + \alpha -1} (1-\theta)^{n_0 + \beta -1 }}{B(\alpha, \beta)}\\
+&\propto Beta(\theta | n_1 + \alpha, n_0 + \beta)
+\end{split}\end{equation}$
+<p>Notice that the posterior is just updating our prior pseudo-counts with the empirical counts . </p>
+
+<h2>Estimators</h2>
+
+<h4>MLE</h4>
+
+<p>MLE: Maximum <em>likelihood</em> estimate. Maximum of $P(D|\theta)$. Given what we know about theta, what should the data look like? How does that compare to the data actually have?</p>
+
+<p>Let the MLE estimator be $\tilde{\theta}$. I always will be using the tilde for MLE. So we have to find $\tilde{\theta}= argmax_{\theta}\{P(D|\theta)\} $.</p>
+
+<p>How do we solve for $\tilde{\theta}$?</p>
+
+<ol>
+	<li>The logarithm is a strictly monotonically increasing function.</li>
+	<li>So we can say equivalently $\tilde{\theta} = argmax_{\theta}\{\ln{P(D|\theta)}\} $.</li>
+	<li>Let $\mathcal{L}(\theta)= \ln {P(D|\theta)} =n_1 \ln{\theta} + n_0 \ln{(1-\theta)} $.</li>
+	<li>So we finally get $\tilde{\theta} = argmax_{\theta}\{\mathcal{L}(\theta) \}$</li>
+	<li>To maximize $\mathcal{L}(\theta)$, we solve $\mathcal{L}'(\theta)=0$</li>
+</ol>
+
+<p>How to solve $\mathcal{L}'(\theta)=0 $?</p>
+
+<ol>
+	<li>Taking the derivative: $\frac{d}{d\theta}\mathcal{L}(\theta)=\frac{n_1}{\theta}-\frac{n_0}{1-\theta} $</li>
+	<li>Solve for $\theta=\frac{n_1}{n_0+n_1}= \frac{n_1}{N}$</li>
+</ol>
+
+<p>Therefore $\tilde{\theta}= \frac{n_1}{N}$.</p>
+
+<p>More generally we can say that $argmax_{\theta}\{\theta^{T_1}(1-\theta)^{T_2}\}=argmax\{Bin(T_1|\theta,T_1+T_2)\}=\frac{T_1}{T_1+T_2}$</p>
+
+<h4>MAP</h4>
+
+<p>MAP: Maximum a Posteriori, maximizing the posterior $P(\theta|D)\propto Beta(\theta|n_1+\alpha,n_0+\beta)$. We will follow the same process of taking the derivative of the logarithm. I will always use $\hat{\theta}$ to represent the MAP estimate.</p>
+
+<p>We have to maximize $P(\theta|D)=\frac{\theta^{n_1+\alpha-1}(1-\theta)^{n_0+\beta-1}}{B(\alpha,\beta)}$. This is equivalent to maximizing $\theta^{n_1+\alpha-1}(1-\theta)^{n_0+\beta-1}$ because the denominator doesn’t depend of $\theta$. Note that $argmax_{\theta}\{Beta(\theta|\alpha,\beta)\}=argmax_{\theta}\{Bin(\alpha-1|\theta, \alpha+\beta-2)\}=\frac{\alpha-1}{\alpha+\beta-2}$Using what we learned from maximizing the MLE, have $\hat{\theta}=\frac{n_1+\alpha-1}{N+\alpha+\beta-2}$</p>
+
+<h4>Observations</h4>
+
+<p>The MAP estimate includes the prior hyper parameters. However if $\displaystyle \lim_{N\to\infty}\hat{\theta}=\tilde{\theta}$. So as we get more and more data, the likelihood overwhelms the prior. </p>
+
+<p>If we chose an uninformative prior ($\alpha=\beta=1$), then $\hat{\theta}=\tilde{\theta}$. So the MAP is exclusively the MLE. </p>
+
+<p>It is also easy to show that $\bar{\theta}=\mathbb{E}[\theta|D]=\frac{n_1+\alpha}{A+N}$ because we know the expected value of the Beta distribution. It also easy to show that $\mathbb{E}[\theta|D]=\lambda \mathbb{E}[\theta] + (1-\lambda)\tilde{\theta}$ where $\lambda = \frac{A}{A+N}$. So the expected value of the posterior is the convex combination the expected value of the prior with the MLE, weighted by the equivalent &amp; empirical sample size. </p>
+
+<p>Looking at variance we know that $\mathbb{V}ar[\theta|D]=\frac{(\alpha+n_1)(\beta+n_0)}{(A+N)^2(A+N+1)}\approx\frac{n_1 n_0}{N^3}=\frac{\tilde{\theta}(1-\tilde{\theta})}{N}$. Where the approximation is taken for large $N$. The uncertainty goes down with rate of $\frac{1}{\sqrt{N}}$</p>
+
+<h2>Posterior Predictive </h2>
+
+<h4>One trial</h4>
+
+<p>What we can do is the the $\tilde{\theta}$ or $\hat{\theta}$ as a point estimate of the true $\theta$, but those 2 estimators are essentially probability distributions. To account for the uncertainty in the estimate, we have to use the distribution. Also, using the point estimate </p>
+
+<p>To recap, we have $\theta|D \sim Beta(n_1+\alpha, n_0+\beta)$, and $X_i \sim Ber(\theta)$, flipping that coin again we would have $X_{N+1}|\theta\sim Ber(\theta)$. Since we don’t actually <em>know</em> $\theta$, we have to integrate it out. Essentially sum up $X_{N+1}|\theta$ across all $\theta$ multiplied by how strongly we believe that $\theta$ is actually that value. </p>
+
+<p>Solving for posterior predictive</p>
+
+<ol>
+	<li>Write definition</li>
+	<li>Plug in probabilities</li>
+	<li>Simplify</li>
+	<li>Integral is just a beta function</li>
+</ol>
+
+$\begin{equation}\begin{split}\displaystyle
+P(X_{N+1}=x|D)
+&=\int_0^1 P(X_{N+1}|\theta) P(\theta|D) d\theta\\
+&= \frac{1}{B(n_1+\alpha, n_0+\beta)}\int_0^1 \theta^x(1-\theta)^{1-x}\theta^{n_1+\alpha-1}(1-\theta)^{n_0+\beta-1}d\theta\\
+&= \frac{1}{B(n_1+\alpha, n_0+\beta)} \int_0^1 \theta^{n_1+\alpha+x-1}(1-\theta)^{n_0+\beta-x}\\
+&= \frac{B(n_1+\alpha+x, n_0+\beta+1-x)}{B(n_1+\alpha, n_0+\beta)}
+\end{split}\end{equation}$ 
+<p>So $P(X_{N+1}=1|D)=\frac{\alpha+n_1}{A+N}$. Since there are only 2 outcomes, we can write this as $X_{N+1}|D\sim Ber(\bar{\theta})$</p>
+
+<p>If we have a lot of data, the MAP approaches the MLE, so it wouldn’t matter much which one to choose. But when we have a small amount of data, the MLE has some problems. If $n_1=0$ and we use the MLE, then we would come to the conclusion that the coin is completely biased and it’s impossible to get heads. But using the MAP we would actually give that a non-zero probably. </p>
+
+<h4>Multiple trials</h4>
+
+<p>Since we only care about the <em>number</em> of heads in multiple future trials, I’ll say that $Y=\sum_{i=1}^M X_{N+i}$ and $Y|\theta \sim Bin(\theta, M)$. Note that $Y\in \{0,\cdots, M\}$. Like last time we have</p>
+
+$\begin{equation}\begin{split}\displaystyle
+P(Y=y|D, M)
+&=\int_0^1 P(Y|\theta) P(\theta|D) d\theta\\
+&= {M \choose y}\frac{1}{B(n_1+\alpha, n_0+\beta)} \int_0^1 \theta^{n_1+\alpha+y-1}(1-\theta)^{n_0+\beta+M-y-1} d\theta\\
+&= {M \choose y} \frac{B(n_1+\alpha+y, n_0+\beta+M-y)}{B(n_1+\alpha, n_0+\beta)}
+\end{split}\end{equation}$
+<p>If we let $a=\alpha+n_1$, $b=\beta+n_0$, then we say that $Y|D\sim BetaBin(a, b, M)$. This is the Beta-Binomial distribution. It is easy to show that $\mathbb{E}[Y|D]=M\frac{a}{a+b}$, $\mathbb{V}ar[Y|D]=\frac{Mab(a+b+M)}{(a+b)^2(a+b+1)}$</p>
+
+<hr />
+
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath:[['$','$']]}});</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=default' async></script>
+</body>
+</html>
+
