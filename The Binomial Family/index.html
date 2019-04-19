@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<title>The Binomial Family</title>
+	</head>
+<body>
+<h1>The Binomial Family</h1>
+
+<h2>Bernoulli $Ber(\theta)$</h2>
+
+<p>This is often times referred to as a Bernoulli trial. The Bernoulli distribution is representing a <em>single</em> coin flip.</p>
+
+<h4>Support</h4>
+
+<p>Support is the set of all possible outcomes: for Bernoulli its Heads and Tails.</p>
+
+<p>Tails is $0$ , heads is $1$. More generally, one of these will be called “failure” and the other “success”.</p>
+
+$Ber(\theta)\in \{0,1\}$
+<p>Instead of assigning each outcome a label, I like to think of of this as the <strong>number of times we got a successful outcome</strong>. For the Bernoulli Distribution, this is equivalent to using the labels. This description will be easier to work with for more complicated distributions. </p>
+
+<h4>Parameters</h4>
+
+<p>$\theta$ is the probability of getting heads. $\theta$ can’t be $0$ or $1$, it would eliminate randomness. </p>
+
+$0<\theta<1$
+<h4>PMF</h4>
+
+<p>We can write the PMF as such. </p>
+
+$Ber(x|\theta) = \left\{\begin{matrix}\theta & x=1 \\ 1-\theta & otherwise \end{matrix}\right\}$
+<p>We can rewrite it in inline form as.</p>
+
+$Ber(x|\theta) = \theta^x (1-\theta)^{(1-x)}, \forall x\in \{0,1\}$
+<p>This makes it easier to work with and manipulate mathematically and it resembles the other distributions in this family closely. </p>
+
+<p>Using this type of notation, using exponents this way to choose between 2 things is fairly common. One of the biggest benefits of writing it this way is that now it can be differentiated. </p>
+
+<h4>Expected value</h4>
+
+<p>Solve for $\mathbb{E}[Ber(\theta)]$</p>
+
+<ul>
+	<li>Do the summation explicitly. </li>
+</ul>
+
+$\displaystyle\mathbb{E}[Ber(\theta)] = \sum_{x\in \{0,1\}}x\cdot Ber(x|\theta)=\sum_{x\in \{0,1\}}x \theta^{x}(1-\theta)^{(1-x)}=0+\theta=\theta$
+<h4>Variance</h4>
+
+<p>Solve for $\mathbb{V}ar[Ber(\theta)]$</p>
+
+<ul>
+	<li>Solve for $\mathbb{E}\left[Ber(\theta)^2\right]$</li>
+	<li>Plug in $\mathbb{E}\left[Ber(\theta)^2\right]$</li>
+</ul>
+
+$\displaystyle \mathbb{E}\left[Ber(\theta)^2\right]= \sum_{x\in \{0,1\}}x^2 Ber(x|\theta)=\sum_{x\in \{0,1\}}x^2 \theta^{x}(1-\theta)^{(1-x)}=0+\theta=\theta$
+$\displaystyle \mathbb{V}ar[Ber(\theta)] = \mathbb{E}\left[Ber(\theta)^2\right] - \mathbb{E}[Ber(\theta)]^2=\theta-\theta^2=\theta(1-\theta)$
+<h2>Binomial $Bin(\theta,n)$</h2>
+
+<p>The Binomial Distribution represents multiple coin flips.</p>
+
+<h4>Support</h4>
+
+<p>The support for the Binomial Distribution <strong>is also</strong> the number of coins landed heads. </p>
+
+$Ber(\theta)\in \{1,\cdots, n\}$
+<h4>Parameters</h4>
+
+<p>Like the Bernoulli distribution, we say that $\theta$ is the probability of flipping heads. But also specify $n$ to be the number of coins being flipped. Since $n$ is a count, it has to be a positive integer.</p>
+
+$n\in \{1,2,\cdots\}$
+<h4>PMF</h4>
+
+<p>Decomposing PMF</p>
+
+<ul>
+	<li>$\theta^x$ is the probability of getting $x$ coins to flip heads</li>
+	<li>$(1-\theta)^{n-x}$ is the probability of getting <em>the rest</em> of the coins to flip tails.</li>
+	<li>${n \choose x}$ is the multiplier since we don’t care about the order of coin flips</li>
+</ul>
+
+$Bin(x|\theta,n) = {n\choose x}\theta^x(1-\theta)^{n-x},\forall x \in \{0,1,\cdots\}$
+<p>The Bernoulli distribution is a specific case of the Binomial distribution. $Ber(\theta) = Bin(\theta, 1)$. </p>
+
+<p>Let  $B_i \sim Ber(\theta)\ \text{IID}$ then</p>
+
+$\displaystyle Bin(\theta, n) = \sum_{i=1}^n B_i$
+<h4>Expected Value</h4>
+
+<p>Solve for $\mathbb{E}[Bin(\theta,n)]$</p>
+
+<ul>
+	<li>Use linearity of expectation</li>
+</ul>
+
+$\displaystyle \mathbb{E}[Bin(\theta,n)] = \sum_{x=1}^n \mathbb{E}[B_i]= n\theta$
+<h4>Variance</h4>
+
+<p>Solve for $\mathbb{V}ar[Bin(\theta, n)]$</p>
+
+<ul>
+	<li>Use sum of variances rule</li>
+</ul>
+
+$\displaystyle \mathbb{V}ar[Bin(\theta,n)] = \sum_{x=1}^n \mathbb{V}ar[B_i] = n\theta(1-\theta)$
+<h2>Categorical $Cat_m(\boldsymbol{\theta})$</h2>
+
+<p>If the Bernoulli distribution is like flipping a coin, then you can think of the Categorical distribution as like rolling an $m$ sided die.</p>
+
+<h4>Support</h4>
+
+<p>Like the Bernoulli distribution, it’s helpful to think of the support as the counts of the outcome. In this case, it would be a vector of size $m$ where exactly 1 element would be 1 and the rest 0. We <em>could</em> specify an index of which outcome happened, but as with the Bernoulli distribution, it’s easier to use the counts. This is also known as a one-hot encoding referring to of the elements hot, set to one, and the rest as off. If $X_i$ are the marginals of $Cat_m(\boldsymbol{\theta})$</p>
+
+$X_i \in \{0,1\}\\
+\displaystyle \sum_{i=1}^m X_i = \left\| \bf{X} \right\|_1 = 1$
+<h4>Parameters</h4>
+
+<p>Instead of specifying the probability for a side, you specify all the probabilities. Or at least all but 1 probabilities. We can figure out the last probability by enforcing that all the probabilities add up to one. We can write this as</p>
+
+$0<\theta_i<1, \forall i \in \{1,\cdots,m\}\\
+\displaystyle \sum_{i=1}^m \theta_i =\left\|\boldsymbol{\theta}\right\|=1$
+<p>All $m$ of these probabilities together are both mutually exclusive and collectively exhaustive.</p>
+
+<ul>
+	<li>Mutually exclusive: only 1 of the events can happen at a time</li>
+	<li>Collectively exhaustive: all the events represent anything that can happen. So one of them must happen.</li>
+</ul>
+
+<h4>PMF</h4>
+
+<p>The PMF</p>
+
+<ol>
+	<li>Standard notation</li>
+	<li>Multi-index notation</li>
+</ol>
+
+$\begin{equation}\begin{split}\displaystyle
+\displaystyle Cat_m\left({\bf x}|\boldsymbol{\theta}\right)
+&= \prod_{i=1}^m x_i^{\theta_i}\\
+&= {\bf x}^{\boldsymbol{\theta}}
+\end{split}\end{equation}$
+<h4>Expected Value</h4>
+
+<p>The expected value of a multi-dimensional random variable is the expected value of each component.</p>
+
+$\mathbb{E}[{\bf X}] = \left[\begin{matrix} \mathbb{E}[X_1] \\ \vdots \\ \mathbb{E}[X_m] \end{matrix} \right]$
+<p>So what are the marginal distributions of the Categorical distribution? $X_i$ is simply the number of times that the die rolls to side $i$, with probability $\theta_i$. The probability of not rolling side $i$ is $1-\theta_i$. This is just the Bernoulli distribution. One caveat is that the $X_i$ are not independent. </p>
+
+<p>Given $X_i$ are the marginals for $Cat_m(\boldsymbol{\theta})$. Let’s prove that</p>
+
+$P(X_i=x_i)=\theta_i^{x_i}(1-\theta_i)^{1-x_i}$
+<p>Sum-out the other variables.</p>
+
+<ul>
+	<li>The $\left\|{\bf x}\right\|$ uses the $x_i$ from the function parameter. </li>
+</ul>
+
+$\displaystyle P(X_i=x_i) = \sum_{\left\|{\bf x}\right\|_1=1} Cat_m({\bf x} | \boldsymbol{\theta})$
+<p>Let’s first look at when $X_i=1$. This means that all other $X_j, j\neq i$ are 0. We don’t have to do the sum because there is only 1 possible value in the support that meets this criteria. </p>
+
+<p>$X_i$ in relation to ${\bf x}$. </p>
+
+<ul>
+	<li>The $1$ is in the $i^{th}$ spot.</li>
+</ul>
+
+$P(X_i=1)=Cat_m\left(\left[
+	\begin{matrix}
+	0 & \cdots & 0 & 1 & 0 & \cdots & 0  
+	\end{matrix}
+\right]^T|\boldsymbol{\theta}\right)=\theta_i$
+<p>Since the support of $X_i$ is only $\{0,1\}$, we can say that $P(X_i=0) = 1-P(X_i=0)=1-\theta_i $. So $X_i\sim Ber\left(\theta_i\right)$</p>
+
+<p>This is exactly what the Bernoulli distribution looks like. So</p>
+
+$\begin{equation}\begin{split}\displaystyle
+\mathbb{E}[X_i] &= \theta_i\\
+\mathbb{E}\left[Cat_m(\boldsymbol{\theta})\right] &= {\boldsymbol{\theta}}
+\end{split}\end{equation}$
+<h4>Variance Matrix</h4>
+
+<p>The covariance matrix can also be found easily. The diagonal of the covariance matrix is just the variance of the the marginal distribution. Using what we know about the Bernoulli distribution, </p>
+
+$\mathbb{C}ov[X_i, X_i] = \mathbb{V}ar[X_i] = \theta_i(1-\theta_i)$
+<p>As for the off-diagonal</p>
+
+$\mathbb{C}ov[X_i, X_j] = \mathbb{E}[X_i X_j]-\mathbb{E}[X_i]\mathbb{E}[X_j]$
+<p>It is easy to show that</p>
+
+$\mathbb{E}[X_i X_j]=0$
+<p>because <em>at least one those</em> must be 0. </p>
+
+<p>And </p>
+
+$\mathbb{E}[X_i]\mathbb{E}[X_j]=\theta_i \theta_j$
+<p>And So we have</p>
+
+$\mathbb{C}ov[Cat_m(\boldsymbol{\theta})]=-\theta_i \theta_j$
+<p>This can be summarized in a neat matrix form as $\mathbb{C}ov[Cat_m({\bf x}|\boldsymbol{\theta})]=diag\left(\boldsymbol{\theta}\right)-\boldsymbol{\theta \theta}^T$</p>
+
+<p>The $diag$ function simply takes a vector and makes it the diagonal of a matrix with off-diagonals being $0$. </p>
+
+<h2>Multinomial $Mult_m\left(\boldsymbol{\theta}, n\right)$</h2>
+
+<p>This is rolling a die several times. </p>
+
+<h4>Support</h4>
+
+<p>The support is the number of times each outcome happened. Since with every roll we <strong>must</strong> get <em>some</em>result, the sum of all the results should equal exactly the number of rolls specified. Given that $X_i$ are the marginals of $Mult_m(\boldsymbol{\theta},n)$ then</p>
+
+$X_i \in \{1,\cdots, n\}\\
+\sum_{i=1}^m X_i = \left\|{\bf X}\right\|_1=n$
+<h4>Parameters</h4>
+
+<p>The $\boldsymbol{\theta}$ is the same as the Categorical distribution. Like in the Binomial case, we have a parameter $n$ that specifies the number of times to roll the die. So we’ll say that</p>
+
+$n\in \{1,2,\cdots\}$
+<h4>PMF</h4>
+
+<p>The multinomial coefficient is</p>
+
+$\displaystyle {n \choose {\bf x}}=\frac{n!}{\prod_{i=1}^m x_i!}$
+<p>PMF</p>
+
+<ol>
+	<li>Regular notation</li>
+	<li>Multi-index &amp; multinomial coefficient notation</li>
+</ol>
+
+$\begin{equation}\begin{split}\displaystyle
+Mult_m\left({\bf x} | \boldsymbol{\theta}, n\right)
+&=\frac{n!}{\prod_{i=1}^m x_i!} \prod_{i=1}^m \theta_i^{x_i}\\
+&= {n\choose{\bf x}}\boldsymbol{\theta}^{{\bf x}}
+\end{split}\end{equation}$ 
+
+<h4>Expected value</h4>
+
+<p>Using a similar technique when working with the Binomial distribution, we can say that if</p>
+
+${\bf C}_i ~\sim Cat_m(\boldsymbol{\theta})\ \text{IID}$
+<p>then</p>
+
+$Mult_p(\boldsymbol{\theta}, n) =\sum_{i=1}^n {\bf C}_i $
+<p>Now it is trivial to show that </p>
+
+$\mathbb{E}\left[Mult_p( \boldsymbol{\theta}, n)\right] = n\boldsymbol{\theta}$
+<h4>Variance Matrix</h4>
+
+<p>Same for the covariance matrix</p>
+
+$\mathbb{V}ar[Mult_p( \boldsymbol{\theta}, n)]=n\left(diag\left(\boldsymbol{\theta}\right)-\boldsymbol{\theta\theta}^T\right)$
+<blockquote>
+<p>Draw diagram connecting all the distributions </p>
+</blockquote>
+
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath:[['$','$']]}});</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=default' async></script>
+</body>
+</html>
+
